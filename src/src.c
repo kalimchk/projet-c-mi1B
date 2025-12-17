@@ -121,7 +121,7 @@ void AVL_reverse_inorder(AVL *root, FILE *out){
 }
 
 // free mémoir de l'AVL
-void AVL_free(AVL *root){
+void AVL_free(AVL *root){ 
     if (root == NULL){
         return;
     }
