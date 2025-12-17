@@ -92,12 +92,13 @@ void write_header(FILE *f){
 }
 
 
+
 void write_AVL(FILE *f,avl *a){
     if(f==NULL || a==NULL){
         return;
     }
     write_AVL(f,a->fg);
-    fprintf(f,"%s;%.3f\n",a->key,a->elt);
+    fprintf(f,"%s;%.3f\n",a->key,a->value);
     write_AVL(f,a->fd);
 }
 
