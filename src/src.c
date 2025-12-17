@@ -1,18 +1,18 @@
 #include "src.h"
 
-// retourne le maximum entre deux entiers
+// maximum entre deux entiers
 int max(int a, int b){
     return (a > b) ? a : b;
 }
 
-// retourne la hauteur d'un noeud AVL
+// hauteur d'un noeud
 int height(AVL *n){
     if (n == NULL)
         return 0;
     return n->height;
 }
 
-// cree un nouveau noeud AVL pour une usine
+// cree noeud pour usine
 AVL *new_node( char *id, int volume){
     AVL *n = malloc(sizeof(AVL));
     if (n == NULL)
@@ -27,7 +27,7 @@ AVL *new_node( char *id, int volume){
     return n;
 }
 
-// effectue une rotation droite pour equilibrer l'AVL
+// rotation droite
 AVL *rotate_right(AVL *y){
     AVL *x = y->left;
     AVL *t2 = x->right;
@@ -39,7 +39,7 @@ AVL *rotate_right(AVL *y){
     return x;
 }
 
-// effectue une rotation gauche pour equilibrer l'AVL
+// rotation gauche 
 AVL *rotate_left(AVL *x){
     AVL *y = x->right;
     AVL *t2 = y->left;
@@ -51,7 +51,7 @@ AVL *rotate_left(AVL *x){
     return y;
 }
 
-// calcule le facteur d'equilibrage d'un noeud AVL
+// equilibre noeud
 int balance_factor(AVL *n){
     if (n == NULL){
         return 0;
@@ -59,7 +59,7 @@ int balance_factor(AVL *n){
     return height(n->left) - height(n->right);
 }
 
-// insere une usine dans l'AVL et ajoute le volume capte
+// insere une usine dans l'AVL et ajoute le volume capté
 AVL *AVL_insert(AVL *root,  char *id, int volume){
     if (root == NULL){
         return new_node(id, volume);
@@ -95,7 +95,7 @@ AVL *AVL_insert(AVL *root,  char *id, int volume){
     return root;
 }
 
-// recherche une usine dans l'AVL a partir de son identifiant
+// recherche usine avec identifiant
 AVL *AVL_find(AVL *root, char *id){
     if (root == NULL){
         return NULL;
@@ -110,7 +110,7 @@ AVL *AVL_find(AVL *root, char *id){
     return AVL_find(root->right, id);
 }
 
-// parcourt l'AVL en ordre inverse et ecrit les donnees
+// parcourt inverse et ecrit les donnees
 void AVL_reverse_inorder(AVL *root, FILE *out){
     if (root == NULL){
         return;
@@ -120,7 +120,7 @@ void AVL_reverse_inorder(AVL *root, FILE *out){
     AVL_reverse_inorder(root->left, out);
 }
 
-// libere toute la memoire allouee pour l'AVL
+// free mémoir de l'AVL
 void AVL_free(AVL *root){
     if (root == NULL){
         return;
@@ -130,7 +130,7 @@ void AVL_free(AVL *root){
     free(root);
 }
 
-// fonction principale du traitement src
+// fonction principale
 int run_src(char *input_csv, char *output_file)
 {
     FILE *in = fopen(input_csv, "r");
