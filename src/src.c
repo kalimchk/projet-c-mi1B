@@ -116,7 +116,7 @@ void AVL_reverse_inorder(AVL *root, FILE *out){
         return;
     }
     AVL_reverse_inorder(root->right, out);
-    fprintf(out, "%s;%.3f\n", root->id, root->volume_src / 1000);
+    fprintf(out, "%s;%.3d\n", root->id, root->volume_src / 1000);
     AVL_reverse_inorder(root->left, out);
 }
 
