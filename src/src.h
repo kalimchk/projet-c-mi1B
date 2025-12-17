@@ -7,8 +7,7 @@
 
 #define ID_MAX_LEN 20
 
-typedef struct AVL
-{
+typedef struct AVL{
     char id[ID_MAX_LEN];
     int volume_src;
     int height;
