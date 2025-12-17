@@ -13,7 +13,7 @@ int height(AVL *n){
 }
 
 // cree un nouveau noeud AVL pour une usine
-AVL *new_node(const char *id, int volume){
+AVL *new_node( char *id, int volume){
     AVL *n = malloc(sizeof(AVL));
     if (n == NULL)
         return NULL;
@@ -60,7 +60,7 @@ int balance_factor(AVL *n){
 }
 
 // insere une usine dans l'AVL et ajoute le volume capte
-AVL *AVL_insert(AVL *root, const char *id, double volume){
+AVL *AVL_insert(AVL *root,  char *id, int volume){
     if (root == NULL){
         return new_node(id, volume);
     }
@@ -131,7 +131,7 @@ void AVL_free(AVL *root){
 }
 
 // fonction principale du traitement src
-int run_src(const char *input_csv, const char *output_file)
+int run_src(char *input_csv, char *output_file)
 {
     FILE *in = fopen(input_csv, "r");
     if (in == NULL){
