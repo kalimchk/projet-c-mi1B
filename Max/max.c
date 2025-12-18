@@ -3,95 +3,8 @@
 #include<string.h>
 
 #include "max.h"
-
-//determine si c'est une usine seul
-
-int is_usine_line(char *line){
-    if(line == NULL){
-        return 0;
-    } 
-    // supprime \n ou \r à la fin
-    char *p = line + strlen(line) - 1;
-    while(p >= line && (*p == '\n' || *p == '\r')) {
-        *p = '\0';
-        p--;
-    }
-
-    char *copy = strdup(line);
-    if(copy == NULL){
-        return 0;
-    }
-    char *cols[5] = {NULL};
-    int i = 0;
-    char *elt = strtok(copy, ";");
-    while(elt != NULL && i < 5){
-        cols[i++] = elt;
-        elt = strtok(NULL, ";");
-    }
-
-    free(copy);
-
-    // Vérifie que cols[1] et cols[3] existent et que cols[3] est un nombre
-    if(i < 4){
-         return 0;
-    }
-
-    float tmp;
-    if(sscanf(cols[3], "%f", &tmp) != 1){
-        return 0;
-    } 
-
-    return 1;
-}
-
-//recupere idd usine + capacite max en m**3
-int parse_usine_line(char *line, char **id_usine, float *capacite_Mm3){
-    if(line == NULL || id_usine == NULL || capacite_Mm3 == NULL){
-        return 0;
-    }
-    // supprime \n ou \r à la fin
-    char *p = line + strlen(line) - 1;
-    while(p >= line && (*p == '\n' || *p == '\r')) {
-        *p = '\0';
-        p--;
-    }
-
-    char *copy = strdup(line);
-    if(copy == NULL){
-        return 0;
-    } 
-
-    char *cols[5] = {NULL};
-    int i = 0;
-    char *elt = strtok(copy, ";");
-    while(elt != NULL && i < 5){
-        cols[i++] = elt;
-        elt = strtok(NULL, ";");
-    }
-    if(i < 4){
-        free(copy);
-        return 0;
-    }
-
-    *id_usine = strdup(cols[1]);
-    if(*id_usine == NULL){
-        free(copy);
-        return 0;
-    }
-
-    float cap;
-    if(sscanf(cols[3], "%f", &cap) != 1){
-        free(copy);
-        free(*id_usine);
-        return 0;
-    }
-
-    *capacite_Mm3 = cap / 1000.0f;  // conversion km³ → Mm³
-
-    free(copy);
-    return 1;
-}
-
+#include "parsing/parser.h"
+#include"avl/avl.h"
 
 //ecrire la premiere ligne du fichier de sortie
 void write_header(FILE *f){
@@ -99,54 +12,6 @@ void write_header(FILE *f){
         return;
     }
     fprintf(f,"identifier,max_volume(M.m3)\n");
-}
-
-
-
-void write_AVL(FILE *f,avl *a){
-    if(f==NULL || a==NULL){
-        return;
-    }
-    write_AVL(f,a->fg);
-    fprintf(f,"%s;%.3f\n",a->key,a->value);
-    write_AVL(f,a->fd);
-}
-
-
-// Insère un nœud dans l'AVL (sans équilibrage)
-avl* avl_insert(avl *a, char *key, float value) {
-    if (a == NULL) {
-        avl *new = malloc(sizeof(avl));
-        if(new == NULL) return NULL;
-        new->key = strdup(key);  // copie de la clé
-        if(new->key == NULL){
-            free(new);
-            return NULL;
-        }
-        new->value = value;
-        new->fg = new->fd = NULL;
-        return new;
-    }
-
-    int cmp = strcmp(key, a->key);
-    if (cmp < 0) {
-        a->fg = avl_insert(a->fg, key, value);
-    } else if (cmp > 0) {
-        a->fd = avl_insert(a->fd, key, value);
-    } else {
-        // si clé existante, remplace la valeur
-        a->value = value;
-    }
-    return a;
-}
-
-// Libère l'AVL et toutes les clés
-void avl_free(avl *a) {
-    if (a == NULL) return;
-    avl_free(a->fg);
-    avl_free(a->fd);
-    free(a->key);
-    free(a);
 }
 
 //lire le fichier csv ->generer un fichier de sortie avec capacité trier
