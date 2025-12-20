@@ -1,4 +1,9 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include "src.h"
+<<<<<<< HEAD
 
 // maximum entre deux entiers
 int max(int a, int b){
@@ -129,6 +134,10 @@ void AVL_free(AVL *root){
     AVL_free(root->right);
     free(root);
 }
+=======
+#include "parsing/parser.h"
+#include"avl/avl.h"
+>>>>>>> 8f63f7f242e70ff86983bb007e5fb6140227f6da
 
 // fonction principale
 int run_src(char *input_csv, char *output_file)
@@ -145,7 +154,7 @@ int run_src(char *input_csv, char *output_file)
         return 2;
     }
     fprintf(out, "identifier;source_volume(M.m3.year-1)\n");
-    AVL *root = NULL;
+    avl *a = NULL;
     char line[512];
     while (fgets(line, sizeof(line), in)){
         char *col1 = strtok(line, ";");
@@ -158,11 +167,11 @@ int run_src(char *input_csv, char *output_file)
         }
         if (strcmp(col1, "-") == 0 && strcmp(col4, "-") != 0){
             double volume = atof(col4);
-            root = AVL_insert(root, col3, volume);
+            a = avl_insert(a, col3, volume);
         }
     }
-    AVL_reverse_inorder(root, out);
-    AVL_free(root);
+    avl_reverse_inorder(a, out);
+    avl_free(a);
     fclose(in);
     fclose(out);
 
