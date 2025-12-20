@@ -44,11 +44,7 @@ int capacite_max(char *csv_path, char *output_path){
         avl_free(usine);
         return 3;
     }
-    if (usine == NULL) {
-        printf("AVL vide !\n");
-    } else {
-        printf("AVL non vide, on a des usines.\n");
-    }
+
     //ecrire dans un fichier de sortie
     write_header(out);
     write_avl(out, usine);
