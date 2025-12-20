@@ -1,5 +1,5 @@
 #include "real.h"
-#include "avl/avl.h"
+#include "../avl/avl.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -48,7 +48,7 @@ int run_real(char *input_csv, char *output_file){
         }
     }
 
-    avl_reverse_inorder(a, out);
+    avl_inorder(a, out, 1);
     avl_free(a);
 
     fclose(in);

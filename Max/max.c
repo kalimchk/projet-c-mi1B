@@ -3,8 +3,8 @@
 #include<string.h>
 
 #include "max.h"
-#include "parsing/parser.h"
-#include"avl/avl.h"
+#include "../parsing/parser.h"
+#include"../avl/avl.h"
 
 //ecrire la premiere ligne du fichier de sortie
 void write_header(FILE *f){
@@ -44,9 +44,14 @@ int capacite_max(char *csv_path, char *output_path){
         avl_free(usine);
         return 3;
     }
+    if (usine == NULL) {
+        printf("AVL vide !\n");
+    } else {
+        printf("AVL non vide, on a des usines.\n");
+    }
     //ecrire dans un fichier de sortie
     write_header(out);
-    write_AVL(out, usine);
+    write_avl(out, usine);
 
     fclose(out);
     avl_free(usine);

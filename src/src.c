@@ -3,141 +3,8 @@
 #include <string.h>
 
 #include "src.h"
-<<<<<<< HEAD
-
-// maximum entre deux entiers
-int max(int a, int b){
-    return (a > b) ? a : b;
-}
-
-// hauteur d'un noeud
-int height(AVL *n){
-    if (n == NULL)
-        return 0;
-    return n->height;
-}
-
-// cree noeud pour usine
-AVL *new_node( char *id, int volume){
-    AVL *n = malloc(sizeof(AVL));
-    if (n == NULL)
-        return NULL;
-
-    strcpy(n->id, id);
-    n->volume_src = volume;
-    n->height = 1;
-    n->left = NULL;
-    n->right = NULL;
-
-    return n;
-}
-
-// rotation droite
-AVL *rotate_right(AVL *y){
-    AVL *x = y->left;
-    AVL *t2 = x->right;
-    x->right = y;
-    y->left = t2;
-    y->height = max(height(y->left), height(y->right)) + 1;
-    x->height = max(height(x->left), height(x->right)) + 1;
-
-    return x;
-}
-
-// rotation gauche 
-AVL *rotate_left(AVL *x){
-    AVL *y = x->right;
-    AVL *t2 = y->left;
-    y->left = x;
-    x->right = t2;
-    x->height = max(height(x->left), height(x->right)) + 1;
-    y->height = max(height(y->left), height(y->right)) + 1;
-
-    return y;
-}
-
-// equilibre noeud
-int balance_factor(AVL *n){
-    if (n == NULL){
-        return 0;
-    }
-    return height(n->left) - height(n->right);
-}
-
-// insere une usine dans l'AVL et ajoute le volume capté
-AVL *AVL_insert(AVL *root,  char *id, int volume){
-    if (root == NULL){
-        return new_node(id, volume);
-    }
-    int cmp = strcmp(id, root->id);
-    if (cmp == 0){
-        root->volume_src += volume;
-        return root;
-    }
-    else if (cmp < 0){
-        root->left = AVL_insert(root->left, id, volume);
-    }
-    else{
-        root->right = AVL_insert(root->right, id, volume);
-    }
-    root->height = 1 + max(height(root->left), height(root->right));
-    int bf = balance_factor(root);
-    if (bf > 1 && strcmp(id, root->left->id) < 0){
-        return rotate_right(root);
-    }
-    if (bf < -1 && strcmp(id, root->right->id) > 0){
-        return rotate_left(root);
-    }
-    if (bf > 1 && strcmp(id, root->left->id) > 0){
-        root->left = rotate_left(root->left);
-        return rotate_right(root);
-    }
-    if (bf < -1 && strcmp(id, root->right->id) < 0){
-        root->right = rotate_right(root->right);
-        return rotate_left(root);
-    }
-
-    return root;
-}
-
-// recherche usine avec identifiant
-AVL *AVL_find(AVL *root, char *id){
-    if (root == NULL){
-        return NULL;
-    }
-    int cmp = strcmp(id, root->id);
-    if (cmp == 0){
-        return root;
-    }
-    if (cmp < 0){
-        return AVL_find(root->left, id);
-    }
-    return AVL_find(root->right, id);
-}
-
-// parcourt inverse et ecrit les donnees
-void AVL_reverse_inorder(AVL *root, FILE *out){
-    if (root == NULL){
-        return;
-    }
-    AVL_reverse_inorder(root->right, out);
-    fprintf(out, "%s;%.3f\n", root->id, root->volume_src / 1000);
-    AVL_reverse_inorder(root->left, out);
-}
-
-// free mémoir de l'AVL
-void AVL_free(AVL *root){ 
-    if (root == NULL){
-        return;
-    }
-    AVL_free(root->left);
-    AVL_free(root->right);
-    free(root);
-}
-=======
-#include "parsing/parser.h"
-#include"avl/avl.h"
->>>>>>> 8f63f7f242e70ff86983bb007e5fb6140227f6da
+#include "../parsing/parser.h"
+#include"../avl/avl.h"
 
 // fonction principale
 int run_src(char *input_csv, char *output_file)
@@ -170,7 +37,7 @@ int run_src(char *input_csv, char *output_file)
             a = avl_insert(a, col3, volume);
         }
     }
-    avl_reverse_inorder(a, out);
+    avl_inorder(a, out,1);
     avl_free(a);
     fclose(in);
     fclose(out);

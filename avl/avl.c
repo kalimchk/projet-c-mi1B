@@ -27,6 +27,19 @@ avl *avl_new_node(char *key, float value){
     return n;
 }
 
+void write_avl(FILE *f, avl *a) {
+    if (f == NULL || a == NULL) return;
+
+    // Parcours sous-arbre droit
+    if (a->fd) write_avl(f, a->fd);
+
+    // Écriture du nœud courant
+    fprintf(f, "%s;%.2f\n", a->key, a->value);
+
+    // Parcours sous-arbre gauche
+    if (a->fg) write_avl(f, a->fg);
+}
+
 // rotation droite
 avl *rotate_right(avl *y){
     avl *x = y->fg;
@@ -57,16 +70,16 @@ int balance_factor(avl *n){
 // insertion AVL avec équilibrage
 avl *avl_insert(avl *a,char *key, float value){
     if (a==NULL){
-        return AVL_new_node(key, value);
+        return avl_new_node(key, value);
     }
     int cmp = strcmp(key, a->key);
     if (cmp == 0){
         a->value = value;  // mise à jour
         return a;
     } else if (cmp < 0){
-        a->fg = AVL_insert(a->fg, key, value);
+        a->fg = avl_insert(a->fg, key, value);
     }else{
-        a->fd = AVL_insert(a->fd, key, value);
+        a->fd = avl_insert(a->fd, key, value);
     }
     a->height = 1 + max(height(a->fg), height(a->fd));
     int bf = balance_factor(a);
@@ -90,7 +103,7 @@ avl *avl_insert(avl *a,char *key, float value){
 }
 
 // recherche
-avl *avl_find(avl *a, const char *key){
+avl *avl_find(avl *a,char *key){
     if (a==NULL){
         return NULL;
     }
