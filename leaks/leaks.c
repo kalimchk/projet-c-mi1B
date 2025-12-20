@@ -48,10 +48,10 @@ int run_leaks(char *input_csv, char *factory_id){
 
     total_leaks = total_leaks / 1000.0;
 
-    FILE *out = fopen("leaks.dat", "a");
-    if (out){
-        fprintf(out, "%s;%.3f\n", factory_id, total_leaks);
-        fclose(out);
+    FILE *f = fopen("leaks.dat", "a");
+    if (f != NULL){
+        fprintf(f, "%s;%.3f\n", factory_id, total_leaks);
+        fclose(f);
     }
 
     return 0;
