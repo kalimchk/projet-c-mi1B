@@ -21,57 +21,72 @@ static char *my_strdup(const char *s){
 
 // run_leaks : calcule les fuites d'une usine et écrit le résultat dans leaks.dat
 int run_leaks(char *input_csv, char *factory_id) {
-    if (input_csv == NULL || factory_id == NULL){
+    if (!input_csv || !factory_id)
         return 1;
-    }
 
     FILE *in = fopen(input_csv, "r");
-    if (in==NULL) {
-        fprintf(stderr, "Erreur ouverture %s\n", input_csv);
+    if (!in)
         return 2;
-    }
 
     char line[512];
-    double total_leaks = 0.0;
-    int found = 0;
+    double total_leaks_km3 = 0.0;
+    double treated_volume_km3 = -1.0;
+    int found_usine = 0;
+    int found_aval = 0;
 
     while (fgets(line, sizeof(line), in)) {
-        if (is_usine_line(line)) { // ignore les lignes invalides
-            char *id_usine = NULL;
-            float volume_Mm3 = 0;
 
-            if (parse_usine_line(line, &id_usine, &volume_Mm3)) {
-                // compare l'ID de l'usine
-                if (strcmp(id_usine, factory_id) == 0) {
-                    found = 1;
+        char *copy = my_strdup(line);
+        if (!copy)
+            continue;
 
-                    // récupérer la colonne fuite (colonne 5)
-                    char *copy = my_strdup(line);
-                    if (copy) {
-                        char *tmp = strtok(copy, ";"); // col1
-                        for (int i = 0; i < 4; i++){
-                            tmp = strtok(NULL, ";");  // col5 = tmp
-                        }if (tmp) {
-                            double fuite = atof(tmp);
-                            total_leaks += volume_Mm3 * fuite; // volume déjà en Mm³
-                        }
-                        free(copy);
-                    }
-                }
-                free(id_usine);
-            }
+        char *cols[5] = {0};
+        char *tok = strtok(copy, ";");
+        for (int i = 0; i < 5 && tok; i++) {
+            cols[i] = tok;
+            tok = strtok(NULL, ";");
         }
+
+        /* Ligne USINE : volume traité MAXIMUM */
+        if (cols[1] &&
+            strcmp(cols[1], factory_id) == 0 &&
+            cols[3] &&
+            strcmp(cols[3], "-") != 0)
+        {
+            treated_volume_km3 = atof(cols[3]);
+            found_usine = 1;
+        }
+
+        /* Tronçons aval uniquement */
+        if (cols[0] &&
+            strcmp(cols[0], factory_id) == 0 &&
+            cols[4] &&
+            strcmp(cols[4], "-") != 0 &&
+            treated_volume_km3 > 0)
+        {
+            double percent = atof(cols[4]) / 100.0;
+            total_leaks_km3 += treated_volume_km3 * percent;
+            found_aval = 1;
+        }
+
+        free(copy);
     }
 
     fclose(in);
 
-    if (found==0){
+    /* Usine inexistante */
+    if (!found_usine){
         return -1;
     }
+    /* Usine sans réseau aval */
+    if (!found_aval){
+        total_leaks_km3 = 0.0;
+    }
+    double total_leaks_Mm3 = total_leaks_km3 / 1000.0;
     // écrire le résultat
     FILE *out = fopen("leaks.dat", "a");
     if (out) {
-        fprintf(out, "%s;%.3f\n", factory_id, total_leaks);
+        fprintf(out, "%s;%.3f\n", factory_id, total_leaks_Mm3);
         fclose(out);
     }
 
