@@ -33,8 +33,15 @@ int run_src(char *input_csv, char *output_file)
             continue;
         }
         if (strcmp(col1, "-") == 0 && strcmp(col4, "-") != 0){
+           
             double volume = atof(col4);
-            a = avl_insert(a, col3, volume);
+            avl* node = avl_find(a, col3);
+            if (node != NULL){
+                node->value += volume;
+            }
+            else{
+                a = avl_insert(a, col3, volume);
+            }
         }
     }
     avl_inorder(a, out,1);
