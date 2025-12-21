@@ -1,6 +1,22 @@
+#define _POSIX_C_SOURCE 200809L
+#include <string.h>
 #include "avl.h"
 #include <stdlib.h>
-#include <string.h>
+
+static char *my_strdup(const char *s){
+    if (!s){
+        return NULL;
+    }
+    size_t len = strlen(s) + 1;
+    char *p = malloc(len);
+    if (!p){
+        return NULL;
+    }
+    memcpy(p, s, len);
+    return p;
+}
+
+
 
 // utilitaire
 int max(int a, int b){ 
@@ -16,7 +32,7 @@ avl *avl_new_node(char *key, float value){
     if (n==NULL){
         return NULL;
     } 
-    n->key = strdup(key);
+    n->key = my_strdup(key);
     if (!n->key) {
         free(n); 
         return NULL; 

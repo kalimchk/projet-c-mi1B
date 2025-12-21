@@ -26,7 +26,6 @@ int capacite_max(char *csv_path, char *output_path){
     avl *usine=NULL;
     char buffer[1024];
 
-
     // lire le fichier
     while(fgets(buffer,sizeof(buffer),csv)!=NULL){
         if(is_usine_line(buffer)){
