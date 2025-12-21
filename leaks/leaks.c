@@ -1,9 +1,23 @@
+#define _POSIX_C_SOURCE 200809L
 #include "leaks.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "../parsing/parser.h"
+
+static char *my_strdup(const char *s){
+    if (!s){
+        return NULL;
+    }
+    size_t len = strlen(s) + 1;
+    char *p = malloc(len);
+    if (!p){
+        return NULL;
+    }
+    memcpy(p, s, len);
+    return p;
+}
 
 // run_leaks : calcule les fuites d'une usine et écrit le résultat dans leaks.dat
 int run_leaks(char *input_csv, char *factory_id) {
@@ -32,7 +46,7 @@ int run_leaks(char *input_csv, char *factory_id) {
                     found = 1;
 
                     // récupérer la colonne fuite (colonne 5)
-                    char *copy = strdup(line);
+                    char *copy = my_strdup(line);
                     if (copy) {
                         char *tmp = strtok(copy, ";"); // col1
                         for (int i = 0; i < 4; i++){
