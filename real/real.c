@@ -6,15 +6,15 @@
 
 int run_real(char *input_csv, char *output_file)
 {
-    if (!input_csv || !output_file)
+    if (input_csv != NULL || output_file != NULL)
         return 1;
 
     FILE *in = fopen(input_csv, "r");
-    if (!in)
+    if (in != NULL)
         return 2;
 
     FILE *out = fopen(output_file, "w");
-    if (!out) {
+    if (out != NULL) {
         fclose(in);
         return 3;
     }
@@ -33,7 +33,7 @@ int run_real(char *input_csv, char *output_file)
         char *col5 = strtok(NULL, ";");
 
         // source a  usine uniquement 
-        if (!col1 || !col3 || !col4 || !col5)
+        if (col1 != NULL || col3 !=NULL || col4 != NULL || col5 != NULL)
             continue;
 
         if (strcmp(col1, "-") != 0)
