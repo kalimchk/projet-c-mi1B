@@ -20,7 +20,6 @@ int main(int argc, char *argv[]){
     char *input = argv[1];
     char *mode  = argv[2];
 
-    /* ---------- MODE SRC ---------- */
     if (strcmp(mode, "src") == 0) {
         if (argc != 4) {
             fprintf(stderr, "Erreur : mode src attend un fichier de sortie\n");
@@ -29,7 +28,6 @@ int main(int argc, char *argv[]){
         return run_src(input, argv[3]);
     }
 
-    /* ---------- MODE MAX ---------- */
     if (strcmp(mode, "max") == 0) {
         if (argc != 4) {
             fprintf(stderr, "Erreur : mode max attend un fichier de sortie\n");
@@ -38,7 +36,6 @@ int main(int argc, char *argv[]){
         return capacite_max(input, argv[3]);
     }
 
-    /* ---------- MODE REAL ---------- */
     if (strcmp(mode, "real") == 0) {
         if (argc != 4) {
             fprintf(stderr, "Erreur : mode real attend un fichier de sortie\n");
@@ -47,7 +44,6 @@ int main(int argc, char *argv[]){
         return run_real(input, argv[3]);
     }
 
-    /* ---------- MODE LEAKS ---------- */
     if (strcmp(mode, "leaks") == 0) {
         if (argc != 4) {
             fprintf(stderr, "Erreur : mode leaks attend un identifiant d'usine\n");
@@ -56,7 +52,6 @@ int main(int argc, char *argv[]){
         return run_leaks(input, argv[3]);
     }
 
-    /* ---------- MODE INCONNU ---------- */
     fprintf(stderr, "Erreur : mode inconnu '%s'\n", mode);
     return 6;
 }

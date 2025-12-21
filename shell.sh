@@ -57,10 +57,11 @@ case "$MODE" in
 esac
 
 # Génération du graphique
-if [ -f histo.gp ]; then
-    echo "Génération du graphique avec gnuplot..."
-    gnuplot histo.gp
-else
-    echo "Avertissement : histo.gp absent, graphique non généré"
+if [ "$MODE" = "src" ] && [ -f histo_src.gp ]; then
+    gnuplot histo_src.gp
+elif [ "$MODE" = "max" ] && [ -f histo_max.gp ]; then
+    gnuplot histo_max.gp
+elif [ "$MODE" = "real" ] && [ -f histo_real.gp ]; then
+    gnuplot histo_real.gp
 fi
 

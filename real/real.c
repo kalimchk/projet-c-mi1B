@@ -1,20 +1,35 @@
 #include "real.h"
-#include "../avl/avl.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "../avl/avl.h"
+
+/* strdup maison (standard C) */
+static char *my_strdup(const char *s){
+    if (!s){
+        return NULL;
+    }
+    size_t len = strlen(s) + 1;
+    char *p = malloc(len);
+    if (!p){
+        return NULL;
+    }
+    memcpy(p, s, len);
+    return p;
+}
 
 int run_real(char *input_csv, char *output_file)
 {
-    if (input_csv != NULL || output_file != NULL)
+    if (!input_csv || !output_file){
         return 1;
+    }
 
     FILE *in = fopen(input_csv, "r");
-    if (in != NULL)
+    if (!in){
         return 2;
-
+    }
     FILE *out = fopen(output_file, "w");
-    if (out != NULL) {
+    if (!out) {
         fclose(in);
         return 3;
     }
@@ -24,40 +39,37 @@ int run_real(char *input_csv, char *output_file)
     avl *a = NULL;
     char line[512];
 
-    while (fgets(line, sizeof(line), in)) {
-
-        char *col1 = strtok(line, ";");
-        char *col2 = strtok(NULL, ";");
-        char *col3 = strtok(NULL, ";");
-        char *col4 = strtok(NULL, ";");
-        char *col5 = strtok(NULL, ";");
-
-        // source a  usine uniquement 
-        if (col1 != NULL || col3 !=NULL || col4 != NULL || col5 != NULL)
+    while (fgets(line, sizeof(line), in)){
+        char *copy = my_strdup(line);
+        if (!copy){
             continue;
+        }
+        char *cols[5] = {NULL};
+        char *tok = strtok(copy, ";");
+        for (int i = 0; i < 5 && tok; i++) {
+            cols[i] = tok;
+            tok = strtok(NULL, ";");
+        }
+        if (cols[1] && cols[3] && cols[4] && strcmp(cols[3], "-") != 0 && strcmp(cols[4], "-") != 0){
+            double volume = atof(cols[3]);
+            double fuite = atof(cols[4]) / 100.0;
+            double real = volume * (1.0 - fuite);
 
-        if (strcmp(col1, "-") != 0)
-            continue;               // pas une source
+            avl *node = avl_find(a, cols[1]);
+            if (node){
+                node->value += real;
+            }
+            else{
+                a = avl_insert(a, cols[1], real);
+            }
+        }
 
-        if (strcmp(col3, "-") == 0)
-            continue;               // ligne usine 
-
-        if (strcmp(col4, "-") == 0 || strcmp(col5, "-") == 0)
-            continue;
-
-        double volume_km3 = atof(col4);
-        double fuite = atof(col5);
-
-        double real_km3 = volume_km3 * (1.0 - fuite / 100.0);
-
-        // cumul par usine 
-        a = avl_insert_or_add(a, col3, real_km3);
+        free(copy);
     }
 
-    // conversion finale k.m3 → M.m3 à l’écriture
-    avl_inorder(a, out, 1000.0);
-
+    avl_inorder(a, out, 1);
     avl_free(a);
+
     fclose(in);
     fclose(out);
 

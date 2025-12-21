@@ -80,7 +80,7 @@ int parse_usine_line(char *line, char **id_usine, float *capacite_Mm3)
     if (i >= 4) {
         float cap;
         if (sscanf(cols[3], "%f", &cap) == 1) {
-            *id_usine = strdup(cols[1]);
+            *id_usine = my_strdup(cols[1]);
             if (*id_usine) {
                 *capacite_Mm3 = cap / 1000.0f;
                 ok = 1;
